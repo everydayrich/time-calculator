@@ -3,32 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rooted in Time Calculator</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <title>Time Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lexend:wght@300;400;500;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #faf7f2;
-      --surface:  #ffffff;
-      --surface2: #f3efe8;
-      --border:   #e8e0d5;
-      --text:     #1e1e1e;
-      --muted:    #7a8499;
-      --gold:     #a0622a;
-      --gold-dim: #c4956a;
-      --shadow:   0 4px 24px rgba(0,0,0,0.07);
+      /* core */
+      --bg:        #F3E6D5;
+      --surface:   #FFFFFF;
+      --surface2:  #FBF3E4;
+      --border:    #E5D3B4;
+      --text:      #1F2427;
+      --muted:     #5E7A78;
+
+      /* accent & semantic */
+      --marigold:  #EB9532;
+      --terracotta:#D84233;
+      --dusty-blue:#75A2A8;
+      --olive:     #3A3F21;
+      --salmon:    #E6A192;
+      --espresso:  #4D2C1D;
+
+      --radius-sm:   8px;
+      --radius-md:   14px;
+      --radius-lg:   20px;
+      --radius-pill: 999px;
+
+      --shadow: 0 4px 24px rgba(31,36,39,0.07);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
-      font-family: 'Jost', sans-serif;
+      font-family: 'Lexend', sans-serif;
       color: var(--text);
       min-height: 100vh;
       padding: 0 0 5rem;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ── Hero header ── */
@@ -43,23 +58,33 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(160,98,42,0.06) 0%, transparent 70%);
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(216,66,51,0.06) 0%, transparent 70%);
       pointer-events: none;
     }
 
+    .hero-logo {
+      max-width: 220px;
+      width: 100%;
+      height: auto;
+      margin: 0 auto 1.5rem;
+      display: block;
+      position: relative;
+    }
+
     .hero-eyebrow {
+      font-family: 'Inter', sans-serif;
       font-size: 0.72rem;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: var(--terracotta);
       margin-bottom: 1rem;
-      font-weight: 500;
+      font-weight: 700;
     }
 
     .hero h1 {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: clamp(2.2rem, 6vw, 4rem);
-      font-weight: 600;
+      font-weight: 700;
       line-height: 1.1;
       color: var(--text);
       letter-spacing: -0.01em;
@@ -68,13 +93,13 @@
 
     .hero h1 em {
       font-style: italic;
-      color: var(--gold);
+      color: var(--terracotta);
     }
 
     .hero p {
       font-size: 1rem;
       color: var(--muted);
-      font-weight: 300;
+      font-weight: 400;
       max-width: 480px;
       margin: 0 auto;
       line-height: 1.7;
@@ -99,7 +124,7 @@
     .input-panel {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 20px;
+      border-radius: var(--radius-lg);
       padding: 2rem;
       box-shadow: var(--shadow);
       position: sticky;
@@ -111,7 +136,7 @@
     }
 
     .panel-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 1.4rem;
       font-weight: 600;
       color: var(--text);
@@ -124,9 +149,10 @@
 
     .field label {
       display: block;
+      font-family: 'Inter', sans-serif;
       font-size: 0.75rem;
-      font-weight: 500;
-      letter-spacing: 0.1em;
+      font-weight: 600;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 0.5rem;
@@ -134,9 +160,9 @@
 
     .field-hint {
       font-size: 0.78rem;
-      color: var(--gold-dim);
+      color: var(--terracotta);
       margin-top: 0.4rem;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     /* Stepper buttons */
@@ -145,7 +171,7 @@
       align-items: center;
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: var(--radius-sm);
       overflow: hidden;
     }
 
@@ -161,14 +187,14 @@
       flex-shrink: 0;
     }
 
-    .stepper button:hover { background: var(--border); color: var(--gold); }
+    .stepper button:hover { background: var(--border); color: var(--terracotta); }
 
     .stepper input {
       flex: 1;
       background: none;
       border: none;
       text-align: center;
-      font-family: 'Jost', sans-serif;
+      font-family: 'Lexend', sans-serif;
       font-size: 1.4rem;
       font-weight: 500;
       color: var(--text);
@@ -195,10 +221,10 @@
     }
 
     .slider-value {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 1.8rem;
       font-weight: 600;
-      color: var(--gold);
+      color: var(--terracotta);
       min-width: 3rem;
       text-align: right;
     }
@@ -218,9 +244,9 @@
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background: var(--gold);
+      background: var(--terracotta);
       border: 3px solid var(--surface);
-      box-shadow: 0 0 0 1px var(--gold);
+      box-shadow: 0 0 0 1px var(--terracotta);
       cursor: pointer;
       transition: transform 0.15s;
     }
@@ -231,7 +257,7 @@
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background: var(--gold);
+      background: var(--terracotta);
       border: 3px solid var(--surface);
       cursor: pointer;
     }
@@ -248,22 +274,22 @@
       width: 100%;
       padding: 0.9rem;
       margin-top: 1.5rem;
-      background: var(--gold);
-      color: #fff;
+      background: var(--marigold);
+      color: var(--espresso);
       border: none;
-      border-radius: 10px;
-      font-family: 'Jost', sans-serif;
+      border-radius: var(--radius-pill);
+      font-family: 'Lexend', sans-serif;
       font-size: 0.95rem;
-      font-weight: 500;
-      letter-spacing: 0.05em;
+      font-weight: 700;
+      letter-spacing: 0.02em;
       cursor: pointer;
       transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-      box-shadow: 0 4px 20px rgba(160,98,42,0.2);
+      box-shadow: 0 4px 20px rgba(235,149,50,0.25);
     }
 
     .calc-btn:hover {
-      background: #b5742f;
-      box-shadow: 0 6px 28px rgba(160,98,42,0.28);
+      background: #d6842c;
+      box-shadow: 0 6px 28px rgba(235,149,50,0.32);
     }
 
     .calc-btn:active { transform: scale(0.98); }
@@ -278,7 +304,7 @@
     .empty-state {
       background: var(--surface);
       border: 1px dashed var(--border);
-      border-radius: 20px;
+      border-radius: var(--radius-lg);
       padding: 4rem 2rem;
       text-align: center;
       color: var(--muted);
@@ -288,12 +314,13 @@
       font-size: 2.5rem;
       margin-bottom: 1rem;
       opacity: 0.4;
+      color: var(--terracotta);
     }
 
     .empty-state p {
       font-size: 0.9rem;
       line-height: 1.6;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     /* ── Summary row — 2×2 grid matching chart card width ── */
@@ -310,7 +337,7 @@
     .summary-stat {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: var(--radius-md);
       padding: 1.25rem 1.5rem;
       opacity: 0;
       transform: translateY(10px);
@@ -320,18 +347,20 @@
     .summary-stat.visible { opacity: 1; transform: translateY(0); }
 
     .summary-stat .stat-label {
+      font-family: 'Inter', sans-serif;
       font-size: 0.72rem;
-      letter-spacing: 0.1em;
+      font-weight: 600;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 0.4rem;
     }
 
     .summary-stat .stat-value {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 1.9rem;
-      font-weight: 600;
-      color: var(--gold);
+      font-weight: 700;
+      color: var(--terracotta);
       line-height: 1;
     }
 
@@ -339,14 +368,14 @@
       font-size: 0.75rem;
       color: var(--muted);
       margin-top: 0.3rem;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     /* ── Chart card — full width, horizontal layout ── */
     .chart-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 20px;
+      border-radius: var(--radius-lg);
       padding: 1.75rem 2rem;
       display: flex;
       flex-direction: row;
@@ -357,7 +386,7 @@
       transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.2s;
     }
 
-    .chart-card:hover { border-color: var(--gold-dim); }
+    .chart-card:hover { border-color: var(--terracotta); }
     .chart-card.visible { opacity: 1; transform: translateY(0); }
 
     /* Donut */
@@ -379,13 +408,14 @@
     }
 
     .chart-center-pct {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 1.8rem;
       font-weight: 700;
       line-height: 1;
     }
 
     .chart-center-word {
+      font-family: 'Inter', sans-serif;
       font-size: 0.62rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -399,7 +429,9 @@
     }
 
     .card-eyebrow {
+      font-family: 'Inter', sans-serif;
       font-size: 0.68rem;
+      font-weight: 700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--muted);
@@ -407,7 +439,7 @@
     }
 
     .card-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 1.3rem;
       font-weight: 600;
       color: var(--text);
@@ -418,12 +450,12 @@
       font-size: 0.85rem;
       color: var(--muted);
       line-height: 1.7;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     .chart-meta strong {
       color: var(--text);
-      font-weight: 500;
+      font-weight: 600;
     }
 
     .legend-row {
@@ -478,7 +510,8 @@ Test your website (optional):
 <body>
 
 <div class="hero">
-  <div class="hero-eyebrow">Rooted in Time Calculator</div>
+  <img class="hero-logo" src="everyday_rich_stacked_logo_rgb_red.png" alt="Everyday Rich" />
+  <div class="hero-eyebrow">Time Calculator</div>
   <h1>how many hours will you get with your child if nothing changes about your current setup?</h1>
   <p>Enter your child's age and average daily waking hours together to see your time across four meaningful windows.</p>
 </div>
@@ -542,7 +575,7 @@ Test your website (optional):
     document.getElementById('sliderDisplay').textContent = parseFloat(el.value);
   }
 
-  const COLORS = ['#c17c5c', '#6b8f71', '#7c6b8f', '#5c7c8f'];
+  const COLORS = ['#D84233', '#EB9532', '#75A2A8', '#3A3F21'];
 
   const CHART_DEFS = [
     {
@@ -654,7 +687,7 @@ Test your website (optional):
                 With child
               </div>
               <div class="legend-item">
-                <div class="legend-dot" style="background:#ede8e1; border:1px solid #c8bfb4"></div>
+                <div class="legend-dot" style="background:#F3E6D5; border:1px solid #E5D3B4"></div>
                 Without child
               </div>
             </div>
@@ -676,7 +709,7 @@ Test your website (optional):
               labels: ['With Child', 'Without Child'],
               datasets: [{
                 data: [withKids, without],
-                backgroundColor: [color, '#ede8e1'],
+                backgroundColor: [color, '#F3E6D5'],
                 borderWidth: 0,
                 hoverOffset: 5,
               }]
@@ -688,10 +721,10 @@ Test your website (optional):
                 legend: { display: false },
                 tooltip: {
                   backgroundColor: '#ffffff',
-                  borderColor: '#e8e0d5',
+                  borderColor: '#E5D3B4',
                   borderWidth: 1,
-                  titleColor: '#1e1e1e',
-                  bodyColor: '#7a8499',
+                  titleColor: '#1F2427',
+                  bodyColor: '#5E7A78',
                   callbacks: {
                     label: (ctx) => {
                       const hrs = Math.round(ctx.parsed).toLocaleString();
