@@ -487,6 +487,7 @@
       justify-content: center;
       gap: 1.5rem;
       margin-top: 0.9rem;
+      margin-bottom: 1.5rem;
       flex-wrap: wrap;
     }
 
@@ -647,7 +648,7 @@
 <div class="hero">
   <img class="hero-logo" src="everyday_rich_stacked_logo_rgb_red.png" alt="Everyday Rich" />
   <div class="hero-eyebrow">Time Calculator</div>
-  <h1>How many hours will you get with your child if nothing changes about your current setup?<br><br>And how many more could you get if it did?</h1>
+  <h1>How much time will you get, and how much could you reclaim?</h1>
   <p>Enter your child's age and average daily waking hours together to see where you stand today. Then see what reclaiming even a few hours a week could change before they turn 18.</p>
 </div>
 
@@ -762,19 +763,19 @@
   // produce numbers no family could realistically reach.
   // singular is used in the "One extra ___" sentence phrasing below. ──
   const ACTIVITY_LIBRARY = [
-    { id: 'ball-games',    label: 'Ball games',         singular: 'ball game',              sub: '≈3 hrs each',        hoursEach: 3,    maxPerYear: 20  },
-    { id: 'movie-nights',  label: 'Movie nights',       singular: 'movie night',             sub: '≈2.5 hrs each',      hoursEach: 2.5,  maxPerYear: 104 },
+    { id: 'ball-games',    label: 'Ball games',         singular: 'ball game',              sub: '≈3 hrs each',        hoursEach: 3,    maxPerYear: 60  },
+    { id: 'movie-nights',  label: 'Movie nights',       singular: 'movie night',             sub: '≈2.5 hrs each',      hoursEach: 2.5,  maxPerYear: 180 },
     { id: 'sunday-dinners', label: 'Sunday dinners',    singular: 'Sunday dinner',           sub: '≈1.5 hrs each',      hoursEach: 1.5,  maxPerYear: 52,  phrase: 'Sunday dinners' },
-    { id: 'beach-park',    label: 'Beach or park days', singular: 'beach or park day',       sub: '≈3.5 hrs each',      hoursEach: 3.5,  maxPerYear: 150 },
-    { id: 'road-trips',    label: 'Road trips',         singular: 'road trip',               sub: '≈5 hrs each',        hoursEach: 5,    maxPerYear: 24  },
-    { id: 'bedtime-stories', label: 'Bedtime stories',  singular: 'bedtime story',           sub: '≈20 min each',       hoursEach: 0.33, maxPerYear: 350 },
-    { id: 'board-games',   label: 'Board game nights',  singular: 'board game night',        sub: '≈1.5 hrs each',      hoursEach: 1.5,  maxPerYear: 150 },
-    { id: 'bike-rides',    label: 'Bike rides',         singular: 'bike ride',               sub: '≈75 min each',       hoursEach: 1.25, maxPerYear: 200 },
-    { id: 'baking',        label: 'Baking together',    singular: 'baking session together', sub: '≈1.5 hrs each',      hoursEach: 1.5,  maxPerYear: 52  },
-    { id: 'library',       label: 'Library visits',     singular: 'library visit',           sub: '≈1 hr each',         hoursEach: 1,    maxPerYear: 104 },
-    { id: 'campouts',      label: 'Backyard campouts',  singular: 'backyard campout',        sub: '≈4 hrs each',        hoursEach: 4,    maxPerYear: 30  },
-    { id: 'concerts',      label: 'Concerts or shows',  singular: 'concert or show',         sub: '≈3 hrs each',        hoursEach: 3,    maxPerYear: 24  },
-    { id: 'fishing',       label: 'Fishing trips',      singular: 'fishing trip',            sub: '≈3.5 hrs each',      hoursEach: 3.5,  maxPerYear: 40  },
+    { id: 'beach-park',    label: 'Beach or park days', singular: 'beach or park day',       sub: '≈3.5 hrs each',      hoursEach: 3.5,  maxPerYear: 250 },
+    { id: 'road-trips',    label: 'Road trips',         singular: 'road trip',               sub: '≈5 hrs each',        hoursEach: 5,    maxPerYear: 40  },
+    { id: 'bedtime-stories', label: 'Bedtime stories',  singular: 'bedtime story',           sub: '≈20 min each',       hoursEach: 0.33, maxPerYear: 700 },
+    { id: 'board-games',   label: 'Board game nights',  singular: 'board game night',        sub: '≈1.5 hrs each',      hoursEach: 1.5,  maxPerYear: 250 },
+    { id: 'bike-rides',    label: 'Bike rides',         singular: 'bike ride',               sub: '≈75 min each',       hoursEach: 1.25, maxPerYear: 300 },
+    { id: 'baking',        label: 'Baking together',    singular: 'baking session together', sub: '≈1.5 hrs each',      hoursEach: 1.5,  maxPerYear: 150 },
+    { id: 'library',       label: 'Library visits',     singular: 'library visit',           sub: '≈1 hr each',         hoursEach: 1,    maxPerYear: 200 },
+    { id: 'campouts',      label: 'Backyard campouts',  singular: 'backyard campout',        sub: '≈4 hrs each',        hoursEach: 4,    maxPerYear: 60  },
+    { id: 'concerts',      label: 'Concerts or shows',  singular: 'concert or show',         sub: '≈3 hrs each',        hoursEach: 3,    maxPerYear: 52  },
+    { id: 'fishing',       label: 'Fishing trips',      singular: 'fishing trip',            sub: '≈3.5 hrs each',      hoursEach: 3.5,  maxPerYear: 80  },
   ];
 
   // Defaults so first-load behavior is sensible without any picking required
