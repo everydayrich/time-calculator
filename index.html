@@ -6,7 +6,6 @@
   <title>Time Calculator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lexend:wght@300;400;500;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -270,6 +269,58 @@
       margin-top: 0.4rem;
     }
 
+    /* Marigold variant of the range slider, used for the reclaim-time input */
+    .slider-marigold::-webkit-slider-thumb {
+      background: var(--marigold);
+      box-shadow: 0 0 0 1px var(--marigold);
+    }
+    .slider-marigold::-moz-range-thumb { background: var(--marigold); }
+    .slider-value.marigold { color: var(--marigold); }
+
+    /* Activity picker — pill buttons, same pattern as the Opportunity Cost Calculator */
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 4px;
+    }
+
+    .pbtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+
+    .pbtn-marker {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--terracotta);
+      flex-shrink: 0;
+      transition: background .15s;
+    }
+
+    .pbtn:hover { background: var(--bg); border-color: var(--terracotta); }
+    .pbtn.on { background: var(--espresso); border-color: var(--espresso); color: var(--bg); }
+    .pbtn.on .pbtn-marker { background: var(--marigold); }
+
+    .picker-count {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      font-weight: 400;
+    }
+
     .calc-btn {
       width: 100%;
       padding: 0.9rem;
@@ -371,63 +422,6 @@
       font-weight: 400;
     }
 
-    /* ── Chart card — full width, horizontal layout ── */
-    .chart-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1.75rem 2rem;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 2rem;
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.2s;
-    }
-
-    .chart-card:hover { border-color: var(--terracotta); }
-    .chart-card.visible { opacity: 1; transform: translateY(0); }
-
-    /* Donut */
-    .chart-wrap {
-      position: relative;
-      flex-shrink: 0;
-      width: 160px;
-      height: 160px;
-    }
-
-    .chart-center-label {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-
-    .chart-center-pct {
-      font-family: 'Lora', serif;
-      font-size: 1.8rem;
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    .chart-center-word {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.62rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 0.15rem;
-    }
-
-    /* Text beside donut */
-    .chart-info {
-      flex: 1;
-    }
-
     .card-eyebrow {
       font-family: 'Inter', sans-serif;
       font-size: 0.68rem;
@@ -458,42 +452,184 @@
       font-weight: 600;
     }
 
-    .legend-row {
+    /* ── Tangible time translations ── */
+    .tangible-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 2rem;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .tangible-block.visible { opacity: 1; transform: translateY(0); }
+
+    .pictogram-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    .pictogram-cell {
+      aspect-ratio: 1 / 1;
+      border-radius: 3px;
+      background: var(--border);
+    }
+
+    .pictogram-cell.filled { background: var(--terracotta); }
+    .pictogram-cell.reclaimed { background: var(--marigold); }
+
+    .pictogram-legend {
       display: flex;
-      gap: 1.25rem;
-      margin-top: 1rem;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 0.9rem;
       flex-wrap: wrap;
     }
 
-    .legend-item {
+    .pictogram-legend-item {
       display: flex;
       align-items: center;
       gap: 0.4rem;
-      font-size: 0.75rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
       color: var(--muted);
     }
 
-    .legend-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
+    .pictogram-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
       flex-shrink: 0;
     }
 
-    /* Skipped state */
-    .chart-card.skipped {
-      opacity: 0.4 !important;
-      pointer-events: none;
+    .tangible-grid-heading {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 1.75rem 0 0.25rem;
     }
 
-    /* Mobile: stack donut above text */
-    @media (max-width: 540px) {
-      .chart-card {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-      .legend-row { justify-content: center; }
+    .tangible-highlight {
+      text-align: center;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tangible-highlight-pct {
+      font-family: 'Lora', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--terracotta);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .tangible-highlight-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.6;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .tangible-highlight-label strong {
+      color: var(--terracotta);
+      font-weight: 600;
+    }
+
+    .reclaim-sentence-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-top: 1.1rem;
+    }
+
+    .reclaim-sentence-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+    }
+
+    .reclaim-sentence-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--marigold);
+      flex-shrink: 0;
+      margin-top: 0.5rem;
+    }
+
+    .reclaim-sentence-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .reclaim-sentence-text strong {
+      color: var(--marigold);
+      font-weight: 700;
+    }
+
+    .tangible-highlight-pct.gain { color: var(--marigold); }
+    .tangible-highlight-label strong.gain { color: var(--marigold); }
+
+    .reclaim-compare {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.1rem;
+      margin: 1rem 0 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .reclaim-chip { text-align: center; }
+
+    .reclaim-chip-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .reclaim-chip-value {
+      font-family: 'Lora', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .reclaim-chip-value.gain { color: var(--marigold); }
+
+    .reclaim-arrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.2rem;
+      color: var(--muted);
+    }
+
+    .tangible-footnote {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-style: italic;
+      color: var(--muted);
+      margin-top: 1.25rem;
+      line-height: 1.6;
+      text-align: center;
     }
   </style>
 </head>
@@ -511,8 +647,8 @@
 <div class="hero">
   <img class="hero-logo" src="everyday_rich_stacked_logo_rgb_red.png" alt="Everyday Rich" />
   <div class="hero-eyebrow">Time Calculator</div>
-  <h1>How many hours will you get with your child if nothing changes about your current setup?</h1>
-  <p>Enter your child's age and average daily waking hours together to see your time across four meaningful windows.</p>
+  <h1>How many hours will you get with your child if nothing changes about your current setup?<br><br>And how many more could you get if it did?</h1>
+  <p>Enter your child's age and average daily waking hours together to see where you stand today. Then see what reclaiming even a few hours a week could change before they turn 18.</p>
 </div>
 
 <div class="main">
@@ -543,6 +679,28 @@
       <div class="slider-labels"><span>0.5h</span><span>8h</span><span>16h</span></div>
     </div>
 
+    <div class="divider"></div>
+
+    <div class="field">
+      <label>Hours Per Week You'd Like to Reclaim</label>
+      <div class="slider-row">
+        <div class="slider-value marigold" id="reclaimDisplay">3.5</div>
+      </div>
+      <input type="range" id="reclaimSlider" min="0" max="56" step="0.5" value="3.5"
+             class="slider-marigold" oninput="onReclaimInput(this)" />
+      <div class="slider-labels"><span>0h</span><span id="reclaimMaxLabel">up to 56h</span></div>
+      <div class="field-hint" style="color:var(--marigold);">Even small amounts add up over years</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="field">
+      <label>Which Moments Matter Most to You?</label>
+      <div class="field-hint" style="color:var(--muted); margin-top:0; margin-bottom:0.5rem;">Pick a few to personalize the results below</div>
+      <div class="presets" id="activityPicker"></div>
+      <div class="picker-count" id="pickerCount"></div>
+    </div>
+
     <button class="calc-btn" onclick="calculate()">Calculate My Time →</button>
   </div>
 
@@ -571,23 +729,77 @@
   }
 
   function onSliderInput(el) {
-    document.getElementById('sliderDisplay').textContent = parseFloat(el.value);
+    const hours = parseFloat(el.value);
+    document.getElementById('sliderDisplay').textContent = hours;
+
+    // Keep the reclaim slider from allowing more hours/week than actually
+    // remain in the day, multiplied out across a week
+    const remainingPerWeek = Math.max(0, 16 - hours) * 7;
+    const reclaimEl = document.getElementById('reclaimSlider');
+    reclaimEl.max = remainingPerWeek;
+    document.getElementById('reclaimMaxLabel').textContent = 'up to ' + remainingPerWeek + 'h';
+    if (parseFloat(reclaimEl.value) > remainingPerWeek) {
+      reclaimEl.value = remainingPerWeek;
+    }
+    document.getElementById('reclaimDisplay').textContent = parseFloat(reclaimEl.value);
   }
 
-  const COLORS = ['#D84233', '#EB9532', '#75A2A8', '#3A3F21'];
+  function onReclaimInput(el) {
+    document.getElementById('reclaimDisplay').textContent = parseFloat(el.value);
+  }
 
-  const CHART_DEFS = [
-    {
-      eyebrow: 'Percent of Total Waking Hours Together',
-      title: '',
-      getDenom: ()       => 112,
-      getValue: (h)      => h * 7,
-      skippedIf: ()      => false,
-      skippedMsg: '',
-    },
+  // ── Activity library — the pool of possible "moments" a user can pick from.
+  // Math is fully transparent: count = (total reclaimed hours) ÷ (typical hours
+  // per activity), so every number on screen can be hand-verified.
+  // hoursEach is based on real typical durations where research exists
+  // (e.g. average movie ≈105 min, average MLB game ≈2h38m in 2025, family
+  // dinners vary widely so a "sit-down Sunday dinner" is estimated higher
+  // than a rushed weeknight meal); the rest are reasonable typical-outing
+  // estimates, noted as such in the footnote.
+  // maxPerYear caps how many times that activity could realistically happen
+  // in a year (e.g. you can't have more Sunday dinners than there are
+  // Sundays) — without this cap, short activities like bedtime stories would
+  // produce numbers no family could realistically reach.
+  // singular is used in the "One extra ___" sentence phrasing below. ──
+  const ACTIVITY_LIBRARY = [
+    { id: 'ball-games',    label: 'Ball games',         singular: 'ball game',              sub: '≈3 hrs each',        hoursEach: 3,    maxPerYear: 20  },
+    { id: 'movie-nights',  label: 'Movie nights',       singular: 'movie night',             sub: '≈2.5 hrs each',      hoursEach: 2.5,  maxPerYear: 104 },
+    { id: 'sunday-dinners', label: 'Sunday dinners',    singular: 'Sunday dinner',           sub: '≈1.5 hrs each',      hoursEach: 1.5,  maxPerYear: 52,  phrase: 'Sunday dinners' },
+    { id: 'beach-park',    label: 'Beach or park days', singular: 'beach or park day',       sub: '≈3.5 hrs each',      hoursEach: 3.5,  maxPerYear: 150 },
+    { id: 'road-trips',    label: 'Road trips',         singular: 'road trip',               sub: '≈5 hrs each',        hoursEach: 5,    maxPerYear: 24  },
+    { id: 'bedtime-stories', label: 'Bedtime stories',  singular: 'bedtime story',           sub: '≈20 min each',       hoursEach: 0.33, maxPerYear: 350 },
+    { id: 'board-games',   label: 'Board game nights',  singular: 'board game night',        sub: '≈1.5 hrs each',      hoursEach: 1.5,  maxPerYear: 150 },
+    { id: 'bike-rides',    label: 'Bike rides',         singular: 'bike ride',               sub: '≈75 min each',       hoursEach: 1.25, maxPerYear: 200 },
+    { id: 'baking',        label: 'Baking together',    singular: 'baking session together', sub: '≈1.5 hrs each',      hoursEach: 1.5,  maxPerYear: 52  },
+    { id: 'library',       label: 'Library visits',     singular: 'library visit',           sub: '≈1 hr each',         hoursEach: 1,    maxPerYear: 104 },
+    { id: 'campouts',      label: 'Backyard campouts',  singular: 'backyard campout',        sub: '≈4 hrs each',        hoursEach: 4,    maxPerYear: 30  },
+    { id: 'concerts',      label: 'Concerts or shows',  singular: 'concert or show',         sub: '≈3 hrs each',        hoursEach: 3,    maxPerYear: 24  },
+    { id: 'fishing',       label: 'Fishing trips',      singular: 'fishing trip',            sub: '≈3.5 hrs each',      hoursEach: 3.5,  maxPerYear: 40  },
   ];
 
-  let chartInstances = [];
+  // Defaults so first-load behavior is sensible without any picking required
+  let selectedActivityIds = new Set(['ball-games', 'movie-nights', 'sunday-dinners', 'beach-park', 'road-trips', 'bedtime-stories']);
+
+  function renderActivityPicker() {
+    const wrap = document.getElementById('activityPicker');
+    wrap.innerHTML = ACTIVITY_LIBRARY.map(a => `
+      <button type="button" class="pbtn${selectedActivityIds.has(a.id) ? ' on' : ''}" onclick="toggleActivity('${a.id}')">
+        <span class="pbtn-marker"></span>${a.label}
+      </button>
+    `).join('');
+    const countEl = document.getElementById('pickerCount');
+    const n = selectedActivityIds.size;
+    countEl.textContent = n === 0 ? 'Pick at least one to personalize your results' : `${n} selected`;
+  }
+
+  function toggleActivity(id) {
+    if (selectedActivityIds.has(id)) {
+      if (selectedActivityIds.size > 1) selectedActivityIds.delete(id); // keep at least one selected
+    } else {
+      selectedActivityIds.add(id);
+    }
+    renderActivityPicker();
+  }
 
   function calculate() {
     const age   = parseInt(document.getElementById('childAge').value);
@@ -601,9 +813,6 @@
       alert('Please select daily hours using the slider.');
       return;
     }
-
-    chartInstances.forEach(c => c.destroy());
-    chartInstances = [];
 
     const panel = document.getElementById('chartsPanel');
     panel.innerHTML = '';
@@ -648,98 +857,136 @@
       });
     }, 30);
 
-    // ── Chart cards — each full width, stacked ────────────────────
-    CHART_DEFS.forEach((def, i) => {
-      const color    = COLORS[i];
-      const skipped  = def.skippedIf(age);
-      const total    = def.getDenom(age);
-      const val      = def.getValue(hours, age);
-      const withKids = Math.min(val, total);
-      const without  = Math.max(0, total - withKids);
-      const pct      = total > 0 ? ((withKids / total) * 100).toFixed(1) : '0.0';
-      const denomStr = total > 0 ? Math.round(total).toLocaleString() : '—';
+    // ── Together snapshot — pictogram (replaces the former donut chart) ──
+    const togetherPct = Math.round((hours / 16) * 100);
+    const togetherCells = Math.min(100, Math.max(0, togetherPct));
+    let togetherPictogramHtml = '';
+    for (let i = 0; i < 100; i++) {
+      togetherPictogramHtml += `<div class="pictogram-cell${i < togetherCells ? ' filled' : ''}"></div>`;
+    }
 
-      const card = document.createElement('div');
-      card.className = 'chart-card' + (skipped ? ' skipped' : '');
+    const snapshotCard = document.createElement('div');
+    snapshotCard.className = 'tangible-block';
+    snapshotCard.innerHTML = `
+      <div class="card-eyebrow">Percent of Total Waking Hours Together</div>
+      <div class="tangible-highlight">
+        <div class="tangible-highlight-pct">${togetherPct}%</div>
+        <div class="tangible-highlight-label">of your child's waking hours each week are spent <strong>with you.</strong></div>
+      </div>
+      <div class="pictogram-grid">${togetherPictogramHtml}</div>
+      <div class="pictogram-legend">
+        <div class="pictogram-legend-item"><span class="pictogram-legend-dot" style="background:var(--terracotta);"></span>With you</div>
+        <div class="pictogram-legend-item"><span class="pictogram-legend-dot" style="background:var(--border);"></span>Without you</div>
+      </div>
+    `;
+    panel.appendChild(snapshotCard);
 
-      if (skipped) {
-        card.innerHTML = `
-          <div class="chart-info">
-            <div class="card-eyebrow">${def.eyebrow}</div>
-            <div class="card-title">${def.title}</div>
-            <div class="chart-meta" style="font-style:italic;">${def.skippedMsg}</div>
-          </div>`;
-      } else {
-        card.innerHTML = `
-          <div class="chart-wrap">
-            <canvas id="chart${i}" width="160" height="160"></canvas>
-            <div class="chart-center-label">
-              <span class="chart-center-pct" style="color:${color}">${pct}%</span>
-            </div>
+    const snapshotDelay = 220;
+    setTimeout(() => {
+      requestAnimationFrame(() => requestAnimationFrame(() => snapshotCard.classList.add('visible')));
+    }, snapshotDelay);
+
+    // ── Reclaimed time — what a small weekly change could add back ──
+    const yearsLeft = Math.max(0, 18 - age);
+    const selectedActivities = ACTIVITY_LIBRARY.filter(a => selectedActivityIds.has(a.id));
+    const weeklyReclaimed = parseFloat(document.getElementById('reclaimSlider').value) || 0;
+    const maxWeeklyReclaimable = Math.max(0, 16 - hours) * 7;
+    const effectiveReclaimed = Math.max(0, Math.min(weeklyReclaimed, maxWeeklyReclaimable));
+
+    if (effectiveReclaimed > 0 && yearsLeft > 0 && selectedActivities.length > 0) {
+      const newHours = hours + effectiveReclaimed / 7; // weekly reclaim converted back to a daily-equivalent addition
+      const newTogetherPct = Math.round((newHours / 16) * 100);
+      const reclaimedHoursTotal = Math.round(effectiveReclaimed * 52 * yearsLeft);
+
+      // Transparent math: weekly rate = reclaimed hours/week ÷ typical hours per
+      // activity, capped at how many times that activity could realistically happen
+      // in a week (e.g. you can't have more Sunday dinners than there are Sundays).
+      // Rather than display that raw rate (a fraction like "0.4/week" is just as hard
+      // to picture as a bare hour count), it's converted into a plain-language sentence
+      // ("One extra ball game every 2.5 weeks") alongside the same rate compounded
+      // into a total by age 18 — so the two figures always agree exactly.
+      function buildActivitySentence(t, perWeek, totalByAdult) {
+        const totalStr = totalByAdult.toLocaleString();
+        if (perWeek >= 1.5) {
+          const n = Math.round(perWeek);
+          return `${n} extra ${t.phrase || t.label.toLowerCase()} a week, adding up to <strong>${totalStr} more by age 18.</strong>`;
+        }
+        if (perWeek >= 0.75) {
+          return `One extra ${t.singular} a week, adding up to <strong>${totalStr} more by age 18.</strong>`;
+        }
+        const intervalWeeks = 1 / perWeek;
+        if (intervalWeeks <= 8) {
+          const w = Math.round(intervalWeeks * 2) / 2;
+          return `One extra ${t.singular} every ${w} week${w === 1 ? '' : 's'}, adding up to <strong>${totalStr} more by age 18.</strong>`;
+        }
+        const months = Math.max(1, Math.round(intervalWeeks / 4.345));
+        return `One extra ${t.singular} every ${months} month${months === 1 ? '' : 's'}, adding up to <strong>${totalStr} more by age 18.</strong>`;
+      }
+
+      const reclaimItemsHtml = selectedActivities.map((t) => {
+        const perWeekUncapped = effectiveReclaimed / t.hoursEach;
+        const perWeekCap = t.maxPerYear / 52;
+        const perWeek = Math.min(perWeekUncapped, perWeekCap);
+        const totalByAdult = Math.round(perWeek * 52 * yearsLeft);
+        const sentence = buildActivitySentence(t, perWeek, totalByAdult);
+        return `
+          <div class="reclaim-sentence-row">
+            <span class="reclaim-sentence-dot"></span>
+            <span class="reclaim-sentence-text">${sentence}</span>
           </div>
-          <div class="chart-info">
-            <div class="card-eyebrow">${def.eyebrow}</div>
-            <div class="card-title">${def.title}</div>
-            <div class="legend-row">
-              <div class="legend-item">
-                <div class="legend-dot" style="background:${color}"></div>
-                With child
-              </div>
-              <div class="legend-item">
-                <div class="legend-dot" style="background:#F3E6D5; border:1px solid #E5D3B4"></div>
-                Without child
-              </div>
-            </div>
-          </div>`;
+        `;
+      }).join('');
+
+      const newTogetherCells = Math.min(100, Math.max(0, newTogetherPct));
+      let reclaimPictogramHtml = '';
+      for (let i = 0; i < 100; i++) {
+        let cls = '';
+        if (i < togetherCells) cls = ' filled';
+        else if (i < newTogetherCells) cls = ' reclaimed';
+        reclaimPictogramHtml += `<div class="pictogram-cell${cls}"></div>`;
       }
 
-      panel.appendChild(card);
+      const reclaimBlock = document.createElement('div');
+      reclaimBlock.className = 'tangible-block';
+      reclaimBlock.innerHTML = `
+        <div class="card-eyebrow">The Power of Small Changes</div>
+        <div class="card-title">Here's what just ${effectiveReclaimed} more hour${effectiveReclaimed === 1 ? '' : 's'} a week adds up to before your child turns 18.</div>
+        <div class="reclaim-compare">
+          <div class="reclaim-chip">
+            <div class="reclaim-chip-label">Now</div>
+            <div class="reclaim-chip-value">${togetherPct}%</div>
+          </div>
+          <div class="reclaim-arrow">→</div>
+          <div class="reclaim-chip">
+            <div class="reclaim-chip-label">With time reclaimed</div>
+            <div class="reclaim-chip-value gain">${newTogetherPct}%</div>
+          </div>
+        </div>
+        <div class="pictogram-grid">${reclaimPictogramHtml}</div>
+        <div class="pictogram-legend">
+          <div class="pictogram-legend-item"><span class="pictogram-legend-dot" style="background:var(--terracotta);"></span>With you now</div>
+          <div class="pictogram-legend-item"><span class="pictogram-legend-dot" style="background:var(--marigold);"></span>Reclaimed</div>
+          <div class="pictogram-legend-item"><span class="pictogram-legend-dot" style="background:var(--border);"></span>Still without you</div>
+        </div>
+        <div class="tangible-highlight">
+          <div class="tangible-highlight-pct gain">+${reclaimedHoursTotal.toLocaleString()}</div>
+          <div class="tangible-highlight-label">extra hours <strong class="gain">with your child</strong> over the next ${yearsLeft} year${yearsLeft === 1 ? '' : 's'}, just from reclaiming ${effectiveReclaimed}h/week.</div>
+        </div>
+        <div class="tangible-grid-heading">What that could add up to</div>
+        <div class="chart-meta" style="margin-bottom:0.25rem;">Each line below shows how ${effectiveReclaimed}h reclaimed per week could be spent if the reclaimed time went to a single activity.</div>
+        <div class="reclaim-sentence-list">${reclaimItemsHtml}</div>
+        <div class="tangible-footnote">Estimates are based on typical hours per activity (e.g., movie ≈105 min per box-office data, MLB game ≈2h38m in 2025 per MLB pace-of-play data), capped at a realistic max frequency. The "by age 18" figure compounds that weekly estimate across all remaining weeks until adulthood.</div>
+      `;
+      panel.appendChild(reclaimBlock);
 
+      const reclaimDelay = 420;
       setTimeout(() => {
-        requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('visible')));
-      }, 100 + i * 120);
-
-      if (!skipped && total > 0) {
-        setTimeout(() => {
-          const ctx = document.getElementById(`chart${i}`).getContext('2d');
-          const instance = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-              labels: ['With Child', 'Without Child'],
-              datasets: [{
-                data: [withKids, without],
-                backgroundColor: [color, '#F3E6D5'],
-                borderWidth: 0,
-                hoverOffset: 5,
-              }]
-            },
-            options: {
-              cutout: '72%',
-              animation: { duration: 800, easing: 'easeOutQuart' },
-              plugins: {
-                legend: { display: false },
-                tooltip: {
-                  backgroundColor: '#ffffff',
-                  borderColor: '#E5D3B4',
-                  borderWidth: 1,
-                  titleColor: '#1F2427',
-                  bodyColor: '#5E7A78',
-                  callbacks: {
-                    label: (ctx) => {
-                      const hrs = Math.round(ctx.parsed).toLocaleString();
-                      const p   = ((ctx.parsed / total) * 100).toFixed(1);
-                      return ` ${ctx.label}: ${hrs}h (${p}%)`;
-                    }
-                  }
-                }
-              }
-            }
-          });
-          chartInstances.push(instance);
-        }, 150 + i * 120);
-      }
-    });
+        requestAnimationFrame(() => requestAnimationFrame(() => reclaimBlock.classList.add('visible')));
+      }, reclaimDelay);
+    }
   }
+
+  renderActivityPicker();
 </script>
 
 </body>
