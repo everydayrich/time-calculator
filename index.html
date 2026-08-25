@@ -831,7 +831,7 @@
     summaryEl.innerHTML = `
       <div class="summary-stat">
         <div class="stat-label">Hours together each week</div>
-        <div class="stat-value">${weeklyHours}</div>
+        <div class="stat-value">${weeklyHours}h</div>
         <div class="stat-sub">out of 112 waking hrs/week</div>
       </div>
       <div class="summary-stat">
@@ -906,30 +906,55 @@
       // to picture as a bare hour count), it's converted into a plain-language sentence
       // ("One extra ball game every 2.5 weeks") alongside the same rate compounded
       // into a total by age 18 — so the two figures always agree exactly.
-      function buildActivitySentence(t, perWeek, totalByAdult) {
-        const totalStr = totalByAdult.toLocaleString();
-        if (perWeek >= 1.5) {
-          const n = Math.round(perWeek);
-          return `${n} extra ${t.phrase || t.label.toLowerCase()} a week, adding up to <strong>${totalStr} more by age 18.</strong>`;
+      // Every total below is derived from the SAME rounded number shown in the
+      // sentence (never from an unrounded rate) — so multiplying the displayed
+      // frequency out by hand always reproduces the displayed total exactly.
+      // When an activity is already at its realistic yearly cap, rounding goes
+      // conservative (toward less frequent) so the total can never exceed that
+      // cap — e.g. a rate that's capped at 4.8/week rounds down to 4/week, not
+      // up to 5/week, which would overshoot the yearly ceiling.
+      function buildActivitySentence(t, perWeek, perWeekCap, yearsLeft) {
+        const totalWeeksAvail = 52 * yearsLeft;
+        const isCapped = perWeek >= perWeekCap - 1e-9;
+
+        const n = isCapped ? Math.floor(perWeek) : Math.round(perWeek);
+        if (n >= 1) {
+          if (n === 1) {
+            const total = totalWeeksAvail;
+            return `One extra ${t.singular} a week, adding up to <strong>${total.toLocaleString()} more by age 18.</strong>`;
+          }
+          const total = n * totalWeeksAvail;
+          return `${n} extra ${t.phrase || t.label.toLowerCase()} a week, adding up to <strong>${total.toLocaleString()} more by age 18.</strong>`;
         }
-        if (perWeek >= 0.75) {
-          return `One extra ${t.singular} a week, adding up to <strong>${totalStr} more by age 18.</strong>`;
+
+        const intervalWeeksPrecise = 1 / perWeek;
+        const w = isCapped
+          ? Math.ceil(intervalWeeksPrecise * 2) / 2   // capped: round toward less frequent (conservative)
+          : Math.round(intervalWeeksPrecise * 2) / 2;
+
+        if (w <= 1) {
+          const total = totalWeeksAvail;
+          return `One extra ${t.singular} a week, adding up to <strong>${total.toLocaleString()} more by age 18.</strong>`;
         }
-        const intervalWeeks = 1 / perWeek;
-        if (intervalWeeks <= 8) {
-          const w = Math.round(intervalWeeks * 2) / 2;
-          return `One extra ${t.singular} every ${w} week${w === 1 ? '' : 's'}, adding up to <strong>${totalStr} more by age 18.</strong>`;
+        if (w <= 8) {
+          const total = Math.round(totalWeeksAvail / w);
+          return `One extra ${t.singular} every ${w} week${w === 1 ? '' : 's'}, adding up to <strong>${total.toLocaleString()} more by age 18.</strong>`;
         }
-        const months = Math.max(1, Math.round(intervalWeeks / 4.345));
-        return `One extra ${t.singular} every ${months} month${months === 1 ? '' : 's'}, adding up to <strong>${totalStr} more by age 18.</strong>`;
+
+        const monthsPrecise = intervalWeeksPrecise / 4.345;
+        const months = isCapped
+          ? Math.max(1, Math.ceil(monthsPrecise))
+          : Math.max(1, Math.round(monthsPrecise));
+        const totalMonthsAvail = yearsLeft * 12;
+        const total = Math.round(totalMonthsAvail / months);
+        return `One extra ${t.singular} every ${months} month${months === 1 ? '' : 's'}, adding up to <strong>${total.toLocaleString()} more by age 18.</strong>`;
       }
 
       const reclaimItemsHtml = selectedActivities.map((t) => {
         const perWeekUncapped = effectiveReclaimed / t.hoursEach;
         const perWeekCap = t.maxPerYear / 52;
         const perWeek = Math.min(perWeekUncapped, perWeekCap);
-        const totalByAdult = Math.round(perWeek * 52 * yearsLeft);
-        const sentence = buildActivitySentence(t, perWeek, totalByAdult);
+        const sentence = buildActivitySentence(t, perWeek, perWeekCap, yearsLeft);
         return `
           <div class="reclaim-sentence-row">
             <span class="reclaim-sentence-dot"></span>
